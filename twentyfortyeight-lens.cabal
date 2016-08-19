@@ -1,0 +1,24 @@
+name:                twentyfortyeight-lens
+version:             0.1.0.0
+homepage:            https://github.com/nmattia/2048-lens
+license:             BSD3
+license-file:        LICENSE
+author:              Nicolas Mattia
+maintainer:          nicolas@nmattia.com
+copyright:           2016 Nicolas Mattia
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+
+executable 2048-lens
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , linear
+                     , lens
+                     , mtl
+                     , boxes
+                     , ansi-terminal
+                     , data-default
+  ghc-options:         -Wall
