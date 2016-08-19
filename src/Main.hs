@@ -27,9 +27,10 @@ instance Default Board where
     where naught = V4 Nothing Nothing Nothing Nothing
 
 main :: IO ()
-main = evalStateT cli' (def :: Board)
+main = evalStateT loop def
   where
-    cli' = forever $ do
+    loop :: Game
+    loop = forever $ do
       liftIO clearScreen
       get >>= liftIO . Boxes.printBox . mkBox
       liftIO getLine >>= \case
@@ -39,17 +40,18 @@ main = evalStateT cli' (def :: Board)
         "l" -> wors %= merge
         (parseCell -> Just (lx, ly, val)) -> lx . ly .= Just (Sum val)
         _ -> return ()
+
     parseCell (words -> [x, y, v]) =
         (,,) <$> parseLens x
              <*> parseLens y
              <*> readMaybe v
-      where
-        parseLens "x" = Just _x
-        parseLens "y" = Just _y
-        parseLens "z" = Just _z
-        parseLens "w" = Just _w
-        parseLens _ = Nothing
     parseCell _ = Nothing
+
+    parseLens "x" = Just _x
+    parseLens "y" = Just _y
+    parseLens "z" = Just _z
+    parseLens "w" = Just _w
+    parseLens _ = Nothing
 
 class Box a where
   mkBox :: a -> Boxes.Box
@@ -73,16 +75,10 @@ merge [] = []
 instance Reversing (V4 a) where
   reversing v = V4 (v^._w) (v^._z) (v^._y) (v^._x)
 
-rows :: Traversal' (M44 (Maybe  a)) [a]
+rows, wors, cols, locs :: Traversal' (M44 (Maybe  a)) [a]
 rows = traverse . list
-
-wors :: Traversal' (M44 (Maybe  a)) [a]
 wors = traverse . reversed . list
-
-cols :: Traversal' (M44 (Maybe  a)) [a]
 cols = transposed . rows
-
-locs :: Traversal' (M44 (Maybe  a)) [a]
 locs = transposed . wors
 
 transposed :: Iso' (M44 (Maybe  a)) (M44 (Maybe  a))
