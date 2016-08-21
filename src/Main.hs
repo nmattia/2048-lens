@@ -20,7 +20,7 @@ import Text.Read           (readMaybe)
 
 import qualified Text.PrettyPrint.Boxes as Boxes
 
-type Board = M44 (Maybe (Sum Int))
+type Board = M44 (Maybe (Sum Integer))
 type Game = StateT Board IO ()
 
 instance Default Board where
@@ -64,7 +64,7 @@ class Box a where
 instance Box Board where
   mkBox v = Boxes.vsep 1 Boxes.center1 $ v^..traverse <&> mkBox
 
-instance Box (V4 (Maybe (Sum Int))) where
+instance Box (V4 (Maybe (Sum Integer))) where
   mkBox v = Boxes.hsep 2 Boxes.center1 $ v^..traverse <&> Boxes.text . f
     where f = maybe "X" (show . getSum)
 
@@ -86,7 +86,7 @@ wors = traverse . reversed . list
 cols = transposed . rows
 locs = transposed . wors
 
-transposed :: Iso' (M44 (Maybe  a)) (M44 (Maybe  a))
+transposed :: Iso' (M44 a) (M44 a)
 transposed = iso transpose transpose
 
 list :: Iso' (V4 (Maybe a)) [a]
